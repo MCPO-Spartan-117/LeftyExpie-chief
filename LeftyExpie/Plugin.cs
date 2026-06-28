@@ -17,7 +17,7 @@ namespace LeftyExpie
     {
         public const string ModGUID = "leftie.leftyexpie";
         public const string ModName = "LeftyExpie";
-        public const string ModVersion = "1.0.2";
+        public const string ModVersion = "1.0.3";
 
         internal static new ManualLogSource Logger;
         private readonly Harmony _harmony = new(ModGUID);
