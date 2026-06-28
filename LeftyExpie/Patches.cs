@@ -20,14 +20,28 @@ namespace LeftyExpie
             [HarmonyPrefix]
             private static bool Prefix(PlayerCamera __instance)
             {
-                __instance.PlayUISound(PlayerCamera.UISoundType.Click, 1f);
-                __instance.body.handSlot = ((__instance.body.handSlot == 0) ? 1 : 0);
-                __instance.handSwapImage.sprite = Plugin.HandSwapSprites[__instance.body.handSlot];
-                if (__instance.body.handSlot == 0)
+                HandednessStatus status = __instance.body.GetStatus<HandednessStatus>();
+                switch (status.Handedness)
                 {
-                    __instance.DoAlert(LocaleRegistry.Get("other", "leftyexpie.handswitchwarning", "<color=\"orange\">WARNING\n</color>You have less dexterity in your right hand"), false);
+                    case 0:
+                        return true;
+                    case 1:
+                        __instance.PlayUISound(PlayerCamera.UISoundType.Click, 1f);
+                        __instance.body.handSlot = ((__instance.body.handSlot == 0) ? 1 : 0);
+                        __instance.handSwapImage.sprite = Plugin.LeftHandSwapSprites[__instance.body.handSlot];
+                        if (__instance.body.handSlot == 0)
+                        {
+                            __instance.DoAlert(LocaleRegistry.Get("other", "leftyexpie.tooltip.handswitchwarning", "<color=\"orange\">WARNING\n</color>You have less dexterity in your right hand"), false);
+                        }
+                        return false;
+                    case 2:
+                        __instance.PlayUISound(PlayerCamera.UISoundType.Click, 1f);
+                        __instance.body.handSlot = ((__instance.body.handSlot == 0) ? 1 : 0);
+                        __instance.handSwapImage.sprite = Plugin.AmbiHandSwapSprites[__instance.body.handSlot];
+                        return false;
+                    default:
+                        return true;
                 }
-                return false;
             }
         }
 
@@ -37,17 +51,31 @@ namespace LeftyExpie
             [HarmonyPrefix]
             private static void Prefix (PlayerCamera __instance)
             {
-                __instance.SwitchHands();
+                HandednessStatus status = __instance.body.GetStatus<HandednessStatus>();
+                if (status.Handedness == 1)
+                {
+                    __instance.SwitchHands();
+                }
             }
 
             [HarmonyPostfix]
             private static void Postfix(PlayerCamera __instance)
             {
-                UILocalizer text1 = __instance.radialMenu.transform.Find("Text (TMP)").GetComponent<UILocalizer>();
-                TextMeshProUGUI text2 = __instance.radialMenu.transform.Find("Text (TMP) (1)").GetComponent<TextMeshProUGUI>();
+                HandednessStatus status = __instance.body.GetStatus<HandednessStatus>();
+                switch (status.Handedness)
+                {
+                    case 0:
+                    case 2:
+                    default:
+                        break;
+                    case 1:
+                        UILocalizer text1 = __instance.radialMenu.transform.Find("Text (TMP)").GetComponent<UILocalizer>();
+                        TextMeshProUGUI text2 = __instance.radialMenu.transform.Find("Text (TMP) (1)").GetComponent<TextMeshProUGUI>();
 
-                text1.key = "secondaryhand";
-                text2.text = Locale.GetOther("mainhand");
+                        text1.key = "secondaryhand";
+                        text2.text = Locale.GetOther("mainhand");
+                        break;
+                }
             }
         }
 
@@ -57,9 +85,21 @@ namespace LeftyExpie
             [HarmonyPostfix]
             private static void Postfix(WoundView __instance)
             {
+                HandednessStatus status = __instance.body.GetStatus<HandednessStatus>();
                 UITooltip uitooltip = __instance.transform.Find("HandButton").GetComponent<UITooltip>();
                 uitooltip.skipLocale = true;
-                uitooltip.tipDesc = LocaleRegistry.Get("other", "handswitchdsc", "Swap your main hand between the Left/Right\nUse this to dig with your second arm if the main one is broken\nYour right arm is slightly weaker than the left");
+                switch (status.Handedness)
+                {
+                    case 0:
+                        uitooltip.tipDesc = Locale.GetOther("handswitchdsc");
+                        break;
+                    case 1:
+                        uitooltip.tipDesc = LocaleRegistry.Get("other", "leftyexpie.tooltip.lefthandswitchdsc", "Swap your main hand between the Left/Right\nUse this to dig with your second arm if the main one is broken\nYour right arm is slightly weaker than the left");
+                        break;
+                    case 2:
+                        uitooltip.tipDesc = LocaleRegistry.Get("other", "leftyexpie.tooltip.ambihandswitchdsc", "Swap your main hand between the Right/Left\nUse this to dig with your second arm if the main one is broken\nBeing ambidextrous, you can use both hands equally well");
+                        break;
+                }
             }
         }
 
@@ -120,9 +160,24 @@ namespace LeftyExpie
                     if (atk.physicalSwing)
                     {
                         num = __instance.slots[slot].armPowerMult;
-                        if (slot == 0)
+                        HandednessStatus status = __instance.GetStatus<HandednessStatus>();
+                        switch (status.Handedness)
                         {
-                            num *= 0.75f;
+                            case 0:
+                                if (slot == 1)
+                                {
+                                    num *= 0.75f;
+                                }
+                                break;
+                            case 1:
+                                if (slot == 0)
+                                {
+                                    num *= 0.75f;
+                                }
+                                break;
+                            case 2:
+                                num *= 0.9f;
+                                break;
                         }
                         num *= 1f + __instance.skills.STRFrom10 * 0.0334f;
                         __instance.attackCooldown = atk.cooldown / (__instance.consciousness * 0.01f) * (1f + __instance.overEncumberance) / (1f + __instance.stimulantMultiplier * 0.66f);
