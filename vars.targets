@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!--Set this to your project's name-->
-    <ProjectName>Template</ProjectName>
+    <ProjectName>LeftyExpie</ProjectName>
     <!--Set this to the game's main folder-->
     <BaseGamePath>C:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
     <BepInExDir>$(BaseGamePath)/BepInEx</BepInExDir>
