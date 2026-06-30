@@ -9,30 +9,36 @@ namespace LeftyExpie
     [StatusOptions(Key = "leftyexpie.handedness", SaveEnabled = true)]
     public sealed class HandednessStatus : BodyStatus
     {
-        public int Handedness;
-
-        public HandednessStatus()
-        {
-            int random = UnityEngine.Random.Range(1, 101);
-            int rightyChance = Mathf.RoundToInt((1f - PlayerPrefs.GetFloat("LeftyExpie_LeftyChance", 0.1f)) * 100f);
-            if (random <= rightyChance)
-            {
-                Handedness = 0; // Right handed
-            }
-            else
-            {
-                Handedness = 1; // Left handed
-            }
-            if (PlayerPrefs.GetInt("LeftyExpie_Ambidextrous", 1) == 1 && random == 100)
-            {
-                Handedness = 2; // Ambidextrous
-            }
-        }
+        public bool NewRun { get; set; } = true;
+        public int Handedness { get; set; } = -1;
     }
 
     [HarmonyPatch(typeof(Body), "Update")]
     public static class BodyUpdateStatusPatch
     {
+        [HarmonyPrefix]
+        public static void Prefix(Body __instance)
+        {
+            HandednessStatus status = __instance.GetStatus<HandednessStatus>();
+            if (status.Handedness == -1)
+            {
+                int random = UnityEngine.Random.Range(1, 101);
+                int rightyChance = Mathf.RoundToInt((1f - PlayerPrefs.GetFloat("LeftyExpie_LeftyChance", 0.1f)) * 100f);
+                if (random <= rightyChance)
+                {
+                    status.Handedness = 0; // Right handed
+                }
+                else
+                {
+                   status.Handedness = 1; // Left handed
+                }
+                if (PlayerPrefs.GetInt("LeftyExpie_Ambidextrous", 1) == 1 && random == 100)
+                {
+                    status.Handedness = 2; // Ambidextrous
+                }
+            }
+        }
+
         [HarmonyPostfix]
         private static void Postfix(Body __instance)
         {

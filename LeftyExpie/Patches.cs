@@ -48,20 +48,18 @@ namespace LeftyExpie
         [HarmonyPatch(typeof(PlayerCamera), "Start")]
         public static class PlayerCameraStartPatch
         {
-            [HarmonyPrefix]
-            private static void Prefix (PlayerCamera __instance)
-            {
-                HandednessStatus status = __instance.body.GetStatus<HandednessStatus>();
-                if (status.Handedness == 1)
-                {
-                    __instance.SwitchHands();
-                }
-            }
-
             [HarmonyPostfix]
             private static void Postfix(PlayerCamera __instance)
             {
                 HandednessStatus status = __instance.body.GetStatus<HandednessStatus>();
+                if (status.NewRun)
+                {
+                    return;
+                }
+                if (status.Handedness == 1)
+                {
+                    __instance.SwitchHands();
+                }
                 switch (status.Handedness)
                 {
                     case 0:
@@ -75,6 +73,28 @@ namespace LeftyExpie
                         text1.key = "secondaryhand";
                         text2.text = Locale.GetOther("mainhand");
                         break;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayerCamera), "Update")]
+        public static class PlayerCameraUpdatePatch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(PlayerCamera __instance)
+            {
+                HandednessStatus status = __instance.body.GetStatus<HandednessStatus>();
+                if (status.NewRun)
+                {
+                    if (status.Handedness == -1) return;
+                    else
+                    {
+                        if (status.Handedness == 1)
+                        {
+                            __instance.SwitchHands();
+                            status.NewRun = false;
+                        }
+                    }
                 }
             }
         }
