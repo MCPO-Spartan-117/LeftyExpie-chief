@@ -55,7 +55,7 @@ namespace LeftyExpie
                 LocaleRegistry.Get("other", "gamesetleftyexpie.leftychancedsc", "Chance that the Experiment will be left handed when starting a new descent.\nIf they are not left handed, they will be right handed."),
                 Setting.SettingCategory.Game,
                 PlayerPrefs.GetFloat("LeftyExpie_LeftyChance", 0.1f),
-                0.01f,
+                0f,
                 1f,
                 value =>
                 {
