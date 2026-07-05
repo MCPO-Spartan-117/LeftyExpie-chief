@@ -19,7 +19,7 @@ namespace LeftyExpie
     {
         public const string ModGUID = "leftie.leftyexpie";
         public const string ModName = "LeftyExpie";
-        public const string ModVersion = "2.0.1";
+        public const string ModVersion = "2.1.0";
 
         internal static new ManualLogSource Logger;
         private readonly Harmony _harmony = new(ModGUID);
@@ -43,9 +43,9 @@ namespace LeftyExpie
                 AssetLoader.LoadSpriteFromPluginFolder(this, "Images/handswitchL.png")
             ];
             HandMoodletSprites = [
-                AssetLoader.LoadSpriteFromPluginFolder(this, "Images/handednessR.png"),
-                AssetLoader.LoadSpriteFromPluginFolder(this, "Images/handednessL.png"),
-                AssetLoader.LoadSpriteFromPluginFolder(this, "Images/handednessA.png"),
+                AssetLoader.LoadSpriteFromPluginFolder(this, "Images/handednessR.png", 85f),
+                AssetLoader.LoadSpriteFromPluginFolder(this, "Images/handednessL.png", 85f),
+                AssetLoader.LoadSpriteFromPluginFolder(this, "Images/handednessA.png", 85f),
             ];
 
             _harmony.PatchAll();
@@ -65,16 +65,19 @@ namespace LeftyExpie
                 value => Mathf.RoundToInt(value * 100f) + "%"
 
             ));
-            ModOptionsRegistry.Register(ModOptionDefinition.Bool("leftyexpie.ambidextrous",
-                LocaleRegistry.Get("other", "gamesetleftyexpie.ambidextrous", "Enable ambidextrous Experiments"),
-                LocaleRegistry.Get("other", "gamesetleftyexpie.ambidextrousdsc", "If enabled, there is a 1% chance that the Experiment will be ambidextrous when starting a new descent.\nAmbidextrous Experiments can use both hands equally well, but are 10% weaker across both hands as a tradeoff."),
+            ModOptionsRegistry.Register(ModOptionDefinition.Float("leftyexpie.ambidextrouschance",
+                LocaleRegistry.Get("other", "gamesetleftyexpie.ambidextrouschance", "Ambidextrous chance"),
+                LocaleRegistry.Get("other", "gamesetleftyexpie.ambidextrouschancedsc", "Chance that the Experiment will be ambidextrous when starting a new descent. Takes priority over both left and right handedness.\nAmbidextrous Experiments can use both hands equally well, but are 10% weaker across both hands as a tradeoff.\nSetting this to 0% effectively disables ambidextrous Experiments."),
                 Setting.SettingCategory.Game,
-                PlayerPrefs.GetInt("LeftyExpie_Ambidextrous", 1) == 1,
+                PlayerPrefs.GetFloat("LeftyExpie_AmbidextrousChance", 0.01f),
+                0f,
+                1f,
                 value =>
                 {
-                    PlayerPrefs.SetInt("LeftyExpie_Ambidextrous", value ? 1 : 0);
+                    PlayerPrefs.SetFloat("LeftyExpie_AmbidextrousChance", value);
                     PlayerPrefs.Save();
-                }
+                },
+                value => Mathf.RoundToInt(value * 100f) + "%"
             ));
             ModOptionsRegistry.Register(ModOptionDefinition.Bool("leftyexpie.handednessmoodles",
                 LocaleRegistry.Get("other", "gamesetleftyexpie.handednessmoodles", "Show handedness moodles"),

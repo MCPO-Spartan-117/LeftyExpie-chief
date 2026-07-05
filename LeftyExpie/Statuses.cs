@@ -32,7 +32,9 @@ namespace LeftyExpie
                 {
                    status.Handedness = 1; // Left handed
                 }
-                if (PlayerPrefs.GetInt("LeftyExpie_Ambidextrous", 1) == 1 && random == 100)
+                int random2 = UnityEngine.Random.Range(0, 101);
+                int ambiChance = Mathf.RoundToInt(PlayerPrefs.GetFloat("LeftyExpie_AmbidextrousChance", 0.01f) * 100f);
+                if (random2 <= ambiChance)
                 {
                     status.Handedness = 2; // Ambidextrous
                 }
