@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using static System.Reflection.Emit.OpCodes;
 using BepInEx;
+using BepInEx.Logging;
 using CUCoreLib.Helpers;
 using HarmonyLib;
+using static HarmonyLib.CodeInstruction;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -123,203 +129,71 @@ namespace LeftyExpie
             }
         }
 
-        [HarmonyPatch(typeof(Body), "Attack")]
-        public static class BodyAttackPatch
-        {
-            [HarmonyPrefix]
-            private static bool Prefix(Body __instance, ref AttackInfo atk, ref int slot, ref bool __result)
-            {
-                if (__instance.conscious && __instance.attackCooldown <= 0f)
-                {
-                    __instance.liquidDrinkTime = 0f;
-                    slot = __instance.handSlot;
-                    atk.damage *= WorldGeneration.GetRunSettingFloat("attackdamage");
-                    atk.structuralDamage *= WorldGeneration.GetRunSettingFloat("attackdamage");
-                    if ((__instance.isRight && __instance.targetLookPos.x < __instance.transform.position.x) || (!__instance.isRight && __instance.targetLookPos.x > __instance.transform.position.x))
-                    {
-                        __instance.SwitchDir();
-                    }
-                    Vector2 vector = (__instance.targetLookPos - __instance.limbs[1].transform.position).normalized;
-                    if (atk.physicalSwing)
-                    {
-                        foreach (Limb limb in __instance.slots[slot].useLimbs)
-                        {
-                            if (limb.broken || limb.dislocated)
-                            {
-                                limb.pain += 2f * limb.brokenPainMultiplier;
-                            }
+        [HarmonyPatch(typeof(Body), nameof(Body.Attack), argumentTypes: [typeof(AttackInfo), typeof(int)])]
+        public static class BodyAttackPatch {
+            internal static ManualLogSource Logger = Plugin.Logger;
+            private static void handness_switch(Body body, ref int slot, ref float attackpower) {
+                HandednessStatus status = body.GetStatus<HandednessStatus>();
+                switch (status.Handedness) {
+                    case 0:
+                        if (slot == 1) {
+                            attackpower *= 0.75f;
                         }
-                        __instance.temperature += 0.125f * atk.cooldown;
-                        if (__instance.limbs[0].broken)
-                        {
-                            __instance.limbs[0].pain += 2f * __instance.limbs[0].brokenPainMultiplier;
+                    break;
+                    case 1:
+                        if (slot == 0) {
+                            attackpower *= 0.75f;
                         }
-                        if (__instance.limbs[1].broken || __instance.limbs[1].dislocated)
-                        {
-                            __instance.limbs[1].pain += 2f * __instance.limbs[1].brokenPainMultiplier;
-                        }
-                        float d = __instance.isRight ? 1f : -1f;
-                        __instance.armOffset = Vector2.SignedAngle(__instance.limbs[1].transform.right * d, vector);
-                        __instance.visualBodyOffset += vector * (atk.rotateAmount * 0.03f);
-                        if (!__instance.standing)
-                        {
-                            for (int j = 3; j < 10; j++)
-                            {
-                                __instance.limbs[j].rb.AddForce(vector * 800f);
-                                __instance.limbs[1].rb.AddForce(-vector * 800f);
-                            }
-                        }
-                    }
-                    __instance.attackRot -= atk.rotateAmount * (__instance.isRight ? 1f : -1f);
-                    if (atk.doAttackAnim)
-                    {
-                        __instance.armsAnimator.Play("ArmsSwing", -1, 0f);
-                    }
-                    __instance.stamina -= atk.staminaUse;
-                    float num = 1f;
-                    if (atk.physicalSwing)
-                    {
-                        num = __instance.slots[slot].armPowerMult;
-                        HandednessStatus status = __instance.GetStatus<HandednessStatus>();
-                        switch (status.Handedness)
-                        {
-                            case 0:
-                                if (slot == 1)
-                                {
-                                    num *= 0.75f;
-                                }
-                                break;
-                            case 1:
-                                if (slot == 0)
-                                {
-                                    num *= 0.75f;
-                                }
-                                break;
-                            case 2:
-                                num *= 0.9f;
-                                break;
-                        }
-                        num *= 1f + __instance.skills.STRFrom10 * 0.0334f;
-                        __instance.attackCooldown = atk.cooldown / (__instance.consciousness * 0.01f) * (1f + __instance.overEncumberance) / (1f + __instance.stimulantMultiplier * 0.66f);
-                        __instance.TryExertSound(atk.cooldown * 1.15f, 0.35f);
-                    }
-                    else
-                    {
-                        __instance.attackCooldown = atk.cooldown;
-                    }
-                    if (atk.unarmed)
-                    {
-                        num *= __instance.clawDamageCurve.Evaluate(__instance.clawHealth);
-                    }
-                    RaycastHit2D[] array = Physics2D.RaycastAll(__instance.limbs[1].transform.position, vector, atk.distance);
-                    Sound.Play(atk.swingSounds[Random.Range(0, atk.swingSounds.Length)], __instance.transform.position, false, true, __instance.transform, atk.volume, 1f, false, false);
-                    if (atk.attackAnim)
-                    {
-                        GameObject gameObject = Object.Instantiate<GameObject>(atk.attackAnim);
-                        gameObject.transform.eulerAngles = new Vector3(0f, 0f, Vector2.SignedAngle(__instance.isRight ? Vector3.right : Vector3.left, vector));
-                        gameObject.transform.localScale = new Vector3(__instance.isRight ? 1f : -1f, 1f, 1f);
-                        gameObject.transform.position = __instance.limbs[1].transform.position;
-                        gameObject.transform.SetParent(__instance.transform);
-                        Object.Destroy(gameObject, 5f);
-                    }
-                    bool flag = false;
-                    foreach (RaycastHit2D raycastHit2D in array)
-                    {
-                        if (raycastHit2D.transform != __instance.transform)
-                        {
-                            if (raycastHit2D.transform.CompareTag("BlockGround"))
-                            {
-                                WorldGeneration.world.DamageBlock(raycastHit2D.point + vector * 0.05f, atk.structuralDamage * num, true, atk.metalMoreDamage);
-                                WorldGeneration.CreateDamageNumber(raycastHit2D.point, (int)(atk.structuralDamage * num));
-                                WorldGeneration.world.CreateHitFlash(PlayerCamera.main.defaultHoverSquareSprite, WorldGeneration.world.BlockToWorldPos(WorldGeneration.world.WorldToBlockPos(raycastHit2D.point + vector * 0.05f)), Quaternion.identity, Color.gray, null);
-                                __instance.CreateCloudSmall(raycastHit2D.point, new Vector2?(raycastHit2D.normal * 4f));
-                                flag = true;
-                                if (!atk.piercing)
-                                {
-                                    break;
-                                }
-                            }
-                            BuildingEntity buildingEntity;
-                            if (raycastHit2D.transform.TryGetComponent<BuildingEntity>(out buildingEntity) && !buildingEntity.cantHit)
-                            {
-                                if (raycastHit2D.rigidbody)
-                                {
-                                    raycastHit2D.rigidbody.AddForceAtPosition(vector * num * atk.knockBack, raycastHit2D.point, ForceMode2D.Impulse);
-                                }
-                                buildingEntity.health -= (buildingEntity.animal ? atk.damage : atk.structuralDamage) * num * ((atk.metalMoreDamage && buildingEntity.metallic) ? 10f : 1f);
-                                WorldGeneration.CreateDamageNumber(raycastHit2D.point, (int)((buildingEntity.animal ? atk.damage : atk.structuralDamage) * num));
-                                SpriteRenderer spriteRenderer;
-                                if (buildingEntity.TryGetComponent<SpriteRenderer>(out spriteRenderer))
-                                {
-                                    WorldGeneration.world.CreateHitFlash(spriteRenderer.sprite, buildingEntity.transform.position, buildingEntity.transform.rotation, Color.red, buildingEntity.transform);
-                                }
-                                Sound.Play(buildingEntity.hitSound, raycastHit2D.point, false, true, null, 1f, 1f, false, false);
-                                __instance.CreateCloudSmall(raycastHit2D.point, new Vector2?(raycastHit2D.normal * 4f));
-                                if (atk.unarmed)
-                                {
-                                    SawbladeScript sawbladeScript;
-                                    if (raycastHit2D.transform.TryGetComponent<SawbladeScript>(out sawbladeScript))
-                                    {
-                                        __instance.Ragdoll();
-                                    }
-                                    CoilScript coilScript;
-                                    if (raycastHit2D.transform.TryGetComponent<CoilScript>(out coilScript))
-                                    {
-                                        coilScript.Shock(__instance.limbs[0]);
-                                    }
-                                }
-                                if (buildingEntity.animal)
-                                {
-                                    raycastHit2D.transform.gameObject.SendMessage("AnimalHit", atk.damage * num);
-                                    __instance.attackCooldown *= 3.5f * atk.attackCooldownMult;
-                                    PlayerCamera.main.lastAttackCool = __instance.attackCooldown;
-                                }
-                                else
-                                {
-                                    raycastHit2D.transform.gameObject.SendMessage("BuildingHit", atk, SendMessageOptions.DontRequireReceiver);
-                                }
-                                flag = true;
-                                if (!atk.piercing)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (flag)
-                    {
-                        if (__instance.standing)
-                        {
-                            __instance.rb.AddForce(-vector * atk.knockBack * num, ForceMode2D.Impulse);
-                        }
-                        else
-                        {
-                            __instance.limbs[1].rb.AddForce(-vector * atk.knockBack * num, ForceMode2D.Impulse);
-                        }
-                        if (atk.unarmed)
-                        {
-                            __instance.clawHealth -= 0.3f;
-                            if (__instance.clawHealth < 20f && Random.value < 0.1f)
-                            {
-                                __instance.slots[slot].limb.skinHealth -= 3f;
-                                __instance.slots[slot].limb.muscleHealth -= 2f;
-                                __instance.slots[slot].limb.pain += 12f;
-                                __instance.slots[slot].limb.bleedAmount += Random.Range(0.35f, 0.85f);
-                            }
-                        }
-                        if (atk.physicalSwing)
-                        {
-                            __instance.dirtyness += atk.cooldown * 1f;
-                            __instance.skills.AddExp(0, atk.damage / 300f);
-                        }
-                        __result = true;
+                    break;
+                    case 2:
+                        attackpower *= 0.9f;
+                    break;
+                }
+            }
 
-                        return false;
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+                List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+                int startidx = -1;
+                int endidx = -1;
+                uint stage = 0;
+                for (var i = 0; i < codes.Count; i++) {
+                    switch(stage) {
+                        case 0:
+                            if(codes[i].opcode == Ldarg_2) {
+                                startidx = i;
+                            } else if(codes[i].operand?.GetType() == typeof(float) && (float)codes[i].operand == 0.75f) {
+                                Logger.LogDebug("Found start " + startidx);
+                                stage++;
+                            }
+                        break;
+                        case 1:
+                            if(codes[i].opcode == Stloc_1) {
+                                endidx = i;
+                                Logger.LogDebug("Found end " + i);
+                                stage++;
+                            }
+                        break;
+                        default:
+                            i = codes.Count;
+                        break;
                     }
                 }
-                __result = false;
 
-                return false;
+                if (endidx != -1) {
+                    List<CodeInstruction> callfunct = new List<CodeInstruction> {
+                        new(Ldarg_0),
+                        new(Ldarga_S, 2),
+                        new(Ldloca_S, 1),
+                        CodeInstruction.Call(typeof(BodyAttackPatch), nameof(BodyAttackPatch.handness_switch))
+                    };
+
+                    codes.RemoveRange(startidx, endidx - startidx + 1);
+                    codes.InsertRange(startidx, callfunct);
+                } else {
+                    Logger.LogError("Not patching");
+                }
+
+                return (IEnumerable<CodeInstruction>)codes;
             }
         }
     }
