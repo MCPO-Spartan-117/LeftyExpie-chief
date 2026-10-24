@@ -14,8 +14,6 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
-  <Import Project="../vars.targets" />
-
   <ItemGroup>
     <None Include="..\\vars.targets" Link="vars.targets" />
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
