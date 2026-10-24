@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>$(ProjectName)</AssemblyName>
@@ -7,10 +7,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
-			https://api.nuget.org/v3/index.json;
-			https://nuget.bepinex.dev/v3/index.json;
-			https://nuget.samboy.dev/v3/index.json
-		</RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+      https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
@@ -68,37 +68,36 @@
   </ItemGroup>
 
   <PropertyGroup>
-  <RequiredFilesToCopy>
-  $(ProjectName).dll;
-  $(ProjectName).pdb
-  </RequiredFilesToCopy>
+    <RequiredFilesToCopy>
+      $(ProjectName).dll;
+      $(ProjectName).pdb
+    </RequiredFilesToCopy>
 
-
-  <RequiredFoldersToCopy>  
-  </RequiredFoldersToCopy>
+    <RequiredFoldersToCopy>
+    </RequiredFoldersToCopy>
   </PropertyGroup>
 
   <Target Name="CopyOutputDllsToPluginsFolder" AfterTargets="AfterBuild" Condition="'$(RequiredFilesToCopy)'!=''">
     <MakeDir Directories="$(BepInExDir)/plugins/$(ProjectName)" />
-  <CombinePath BasePath="$(OutDir)" Paths="$(RequiredFilesToCopy)">
-    <Output TaskParameter="CombinedPaths" ItemName="RequiredFilesToCopy_Combined" />
-  </CombinePath>
-  <Copy
-    SourceFiles="@(RequiredFilesToCopy_Combined)"
+    <CombinePath BasePath="$(OutDir)" Paths="$(RequiredFilesToCopy)">
+      <Output TaskParameter="CombinedPaths" ItemName="RequiredFilesToCopy_Combined" />
+    </CombinePath>
+    <Copy
+      SourceFiles="@(RequiredFilesToCopy_Combined)"
       DestinationFolder="$(BepInExDir)/plugins/$(ProjectName)"
-  />
-</Target>
+    />
+  </Target>
 
   <Target Name="CopyFoldersToPluginsFolder" AfterTargets="AfterBuild" Condition="'$(RequiredFoldersToCopy)'!=''">
-  <ItemGroup>
-    <RequiredFolders Include="$(RequiredFoldersToCopy.Split(';'))" />
-    <FilesToCopy Include="%(RequiredFolders.Identity)/**/*" />
-  </ItemGroup>
-  <Copy
-    SourceFiles="@(FilesToCopy)"
+    <ItemGroup>
+      <RequiredFolders Include="$(RequiredFoldersToCopy.Split(';'))" />
+      <FilesToCopy Include="%(RequiredFolders.Identity)/**/*" />
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(FilesToCopy)"
       DestinationFiles="@(FilesToCopy->'$(BepInExDir)/plugins/$(ProjectName)/%(Identity)')"
-  />
-</Target>
+    />
+  </Target>
 
   <Target Name="ValidateTemplatePaths" BeforeTargets="ResolveReferences">
     <Error Condition="!Exists('$(GameAssembliesDir)/Assembly-CSharp.dll')"
