@@ -100,11 +100,11 @@
   <Target Name="ValidateTemplatePaths" BeforeTargets="ResolveReferences">
     <Error
       Condition="!Exists('$(GameAssembliesDir)/Assembly-CSharp.dll')"
-      Text="Could not find Assembly-CSharp.dll in the resolved game folder. This template builds against the full game (steamapps\common\Casualties Unknown), not the Demo. Set ManualBaseGamePath/BaseGamePath in vars.targets or pass /p:BaseGamePath=... when building."
+      Text="Could not find Assembly-CSharp.dll in the resolved game folder. This template builds against the full game (steamapps\common\Casualties Unknown), not the Demo. Set ManualBaseGamePath/BaseGamePath in vars.targets or pass /p:BaseGamePath=... when building.&#xA;Checked: '$(GameAssembliesDir)'"
     />
     <Error
       Condition="'$(CUCoreLibDllPath)' == '' or !Exists('$(CUCoreLibDllPath)')"
-      Text="Could not find CUCoreLib.dll. Update CUCoreLibDllPath in vars.targets or install/build CUCoreLib first."
+      Text="Could not find CUCoreLib.dll. Update CUCoreLibDllPath in vars.targets or install/build CUCoreLib first.&#xA;Checked: '$(CUCoreLibDllPath)'"
     />
   </Target>
 </Project>
