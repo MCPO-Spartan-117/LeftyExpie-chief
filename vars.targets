@@ -4,6 +4,7 @@
     <ProjectName>Template</ProjectName>
 
     <!--If auto-detection misses your install, set this to your game folder.-->
+    <!-- This template targets the full game ("...\steamapps\common\Casualties Unknown"), not the Demo. -->
     <!-- E.g. <ManualBaseGamePath>C:\Some\Path\To\Your\Game\Folder</ManualBaseGamePath> -->
     <ManualBaseGamePath></ManualBaseGamePath>
 
@@ -15,104 +16,104 @@
 
   <Choose>
     <When Condition="'$(BaseGamePath)' != ''" />
-    <When Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>C:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>C:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('C:\Program Files\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('C:\Program Files\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>C:\Program Files\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>C:\Program Files\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('C:\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('C:\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>C:\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>C:\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('D:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('D:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>D:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>D:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('D:\Program Files\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('D:\Program Files\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>D:\Program Files\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>D:\Program Files\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('D:\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('D:\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>D:\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>D:\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('E:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('E:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>E:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>E:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('E:\Program Files\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('E:\Program Files\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>E:\Program Files\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>E:\Program Files\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('E:\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('E:\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>E:\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>E:\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('F:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('F:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>F:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>F:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('F:\Program Files\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('F:\Program Files\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>F:\Program Files\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>F:\Program Files\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('F:\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('F:\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>F:\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>F:\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('G:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('G:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>G:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>G:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('G:\Program Files\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('G:\Program Files\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>G:\Program Files\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>G:\Program Files\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('G:\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('G:\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>G:\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>G:\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('H:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('H:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>H:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>H:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('H:\Program Files\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('H:\Program Files\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>H:\Program Files\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>H:\Program Files\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('H:\Steam\steamapps\common\Casualties Unknown Demo')">
+    <When Condition="Exists('H:\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>H:\Steam\steamapps\common\Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>H:\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('$(HOME)/.steam/steam/steamapps/common/Casualties Unknown Demo')">
+    <When Condition="Exists('$(HOME)/.steam/steam/steamapps/common/Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>$(HOME)/.steam/steam/steamapps/common/Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>$(HOME)/.steam/steam/steamapps/common/Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('$(HOME)/.local/share/Steam/steamapps/common/Casualties Unknown Demo')">
+    <When Condition="Exists('$(HOME)/.local/share/Steam/steamapps/common/Casualties Unknown')">
       <PropertyGroup>
-        <BaseGamePath>$(HOME)/.local/share/Steam/steamapps/common/Casualties Unknown Demo</BaseGamePath>
+        <BaseGamePath>$(HOME)/.local/share/Steam/steamapps/common/Casualties Unknown</BaseGamePath>
       </PropertyGroup>
     </When>
   </Choose>

@@ -2,17 +2,21 @@
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using MonoMod.RuntimeDetour;
+using UnityEngine;
+using Newtonsoft.Json.Linq;
+
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using MonoMod.RuntimeDetour;
-using UnityEngine;
+
+// Use the below namespaces if you want to use CUCoreLib features. You can remove them if you don't need them.
 using CUCoreLib.ContentReload;
 using CUCoreLib.Data;
 using CUCoreLib.Helpers;
 using CUCoreLib.Registries;
 using CUCoreLib.Saving;
-using Newtonsoft.Json.Linq;
+
 
 namespace ModNamespace
 {
@@ -37,18 +41,11 @@ namespace ModNamespace
             Logger.LogInfo($"Plugin {ModName} is loaded!");
 
             DoStuff();
-            ContentReloadManager.EnableHotReload(ModGUID); // Required for hot reload, put any registry registrations in the RegisterReloadable method below
-            RegisterReloadable();
-        }
-
-        private void RegisterReloadable()
-        {
-    
         }
 
         private void DoStuff()
         {
-            
+            // Put anything you want to do on plugin load here. For example, you can register new content, add new data, or modify existing game behavior!
         }
     }
 }
