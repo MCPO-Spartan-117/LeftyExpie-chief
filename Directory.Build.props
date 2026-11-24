@@ -16,6 +16,11 @@
 
   <Choose>
     <When Condition="'$(BaseGamePath)' != ''" />
+    <When Condition="Exists('$(MSBuildThisFileDirectory)../../CasualtiesUnknown.exe')">
+      <PropertyGroup>
+        <BaseGamePath>$(MSBuildThisFileDirectory)../../</BaseGamePath>
+      </PropertyGroup>
+    </When>
     <When Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown')">
       <PropertyGroup>
         <BaseGamePath>C:\Program Files (x86)\Steam\steamapps\common\Casualties Unknown</BaseGamePath>
